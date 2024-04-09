@@ -8,13 +8,18 @@ export default authMiddleware({
   // no authentication information
   afterAuth(auth, req) {
     if (auth.userId && auth.isPublicRoute) {
-        return NextResponse.redirect(new URL("/booking", req.url));
-    }
-
+      return NextResponse.redirect(new URL("/booking", req.url));
+  }
+    
     if (!auth.userId && !auth.isPublicRoute ) {
         return redirectToSignIn({returnBackUrl: req.url});
     }
 
+    if (auth.userId && !auth.isPublicRoute) {
+      return NextResponse.next();
+    }
+    // Allow users visiting public routes to access them
+    return NextResponse.next();
 }
 });
  

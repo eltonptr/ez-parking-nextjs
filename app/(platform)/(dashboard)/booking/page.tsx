@@ -1,3 +1,5 @@
+
+import { SaveUser } from "@/actions/save-user"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -16,12 +18,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { currentUser } from "@clerk/nextjs"
 
-export default function BookingPage() {
+export default async function BookingPage() {
     async function create(formdata:FormData) {
-        "use server"
-        console.log("I'm triggered")
+      "use server"
+      console.log("I'm triggered")
+      
     }
+    const user = await currentUser();
+    if (user) {
+      await SaveUser(user);
+    }
+   
   return (
     <>
         <form action={create}>
@@ -30,7 +39,7 @@ export default function BookingPage() {
               <Label htmlFor="name">Location ID</Label>
               <Input id="name" placeholder="ID #1234" />
             </div>
-            <div className="flex flex-col space-y-1.5">
+            {/* <div className="flex flex-col space-y-1.5">
               <Label htmlFor="framework">Framework</Label>
               <Select>
                 <SelectTrigger id="framework">
@@ -43,7 +52,7 @@ export default function BookingPage() {
                   <SelectItem value="nuxt">Nuxt.js</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
             <Button variant="outline" type="submit">Submit</Button>
           </div>
             

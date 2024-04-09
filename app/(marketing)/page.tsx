@@ -4,7 +4,6 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Logo } from "@/components/logo";
 
 const textFont = Source_Code_Pro({
   subsets: ["latin"],
