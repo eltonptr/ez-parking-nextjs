@@ -1,5 +1,7 @@
 import { Logo } from "@/components/logo";
 import { UserButton } from "@clerk/nextjs";
+
+
 export const Navbar = () => {
   return (
     <nav

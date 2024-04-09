@@ -8,7 +8,7 @@ export default authMiddleware({
   // no authentication information
   afterAuth(auth, req) {
     if (auth.userId && auth.isPublicRoute) {
-        return NextResponse.redirect(new URL("/location", req.url));
+        return NextResponse.redirect(new URL("/booking", req.url));
     }
 
     if (!auth.userId && !auth.isPublicRoute ) {
