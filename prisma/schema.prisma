@@ -19,6 +19,9 @@ model User {
   lastName String @db.VarChar(500)
   emailaddress String @db.VarChar(255)
   booking Booking[]
+  fine Fine[]
+  savedPayment SavedPayment[]
+  savedCar SavedCar[]
   created DateTime
   lastUpdate DateTime
 }
@@ -47,4 +50,33 @@ model Booking {
   User User @relation(fields: [UserId], references: [id])
   created DateTime
   lastUpdate DateTime
+}
+
+model Fine {
+  id Int @id @default(autoincrement())
+  startTime DateTime
+  endTime DateTime
+  dueAmount Decimal @db.Decimal(11,8)
+  UserId Int
+  User User @relation(fields: [UserId], references: [id])
+}
+
+model SavedPayment {
+  id Int @id @default(autoincrement())
+  nickName String @db.VarChar(255)
+  type String @db.VarChar(255)
+  cardNumber String @db.VarChar(255)
+  expiryDate DateTime
+  cvv Int
+  UserId Int
+  User User @relation(fields: [UserId], references: [id])
+}
+
+model SavedCar {
+  id Int @id @default(autoincrement())
+  nickName String @db.VarChar(255)
+  province String @db.VarChar(255)
+  licensePlate String @db.VarChar(50)
+  UserId Int
+  User User @relation(fields: [UserId], references: [id])
 }
