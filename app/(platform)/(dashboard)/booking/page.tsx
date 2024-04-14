@@ -1,4 +1,5 @@
 
+import { GetLocations } from "@/actions/get-location"
 import { SaveUser } from "@/actions/save-user"
 import { Button } from "@/components/ui/button"
 import {
@@ -21,11 +22,6 @@ import {
 import { currentUser } from "@clerk/nextjs"
 
 export default async function BookingPage() {
-    async function create(formdata:FormData) {
-      "use server"
-      console.log("I'm triggered")
-      
-    }
     const user = await currentUser();
     if (user) {
       await SaveUser(user);
@@ -33,7 +29,7 @@ export default async function BookingPage() {
    
   return (
     <>
-        <form action={create}>
+        <form action={GetLocations}>
           <div className="grid max-w-xs md:max-w-sm pb-5 items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="name">Location ID</Label>

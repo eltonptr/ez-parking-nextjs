@@ -1,2 +1,8 @@
-import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
+"use server"
+
+
+export async function GetLocations(form:FormData) {
+
+console.log(form);
+
+}
