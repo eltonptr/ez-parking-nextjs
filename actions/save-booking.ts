@@ -1,7 +1,6 @@
 "use server"
 
-
-export async function SaveBooking(prevState:any, form:FormData) {
-
-    console.log(form);
+export async function SaveBooking(data: any ) {
+    
+    console.log(data);
 }
