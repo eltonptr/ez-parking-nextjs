@@ -33,9 +33,11 @@ import { format, max } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
-import { date, z } from "zod";
+import {  z } from "zod";
 import { useUser } from "@clerk/nextjs";
 import { useToast } from "@/components/ui/use-toast";
+import { GetSavedCars } from "@/actions/get-saved-cars";
+import { useEffect, useState } from "react";
 const formSchema = z.object({
   dateTime: z
     .instanceof(Date, { message: "Date field is required" })
@@ -45,7 +47,7 @@ const formSchema = z.object({
         "The booking date should be in future!"
       );
     }),
-    endTime: z
+  endTime: z
     .instanceof(Date, { message: "Date field is required" })
     .refine((date) => {
       return (
@@ -63,12 +65,29 @@ export default function BookingPage() {
   maxDay.setDate(today.getDate() + 5);
 
   const [state, formAction] = useFormState(GetLocations, null);
+  const [car, setCar] = useState({});
   const { user } = useUser();
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
   });
   const { register, handleSubmit, watch } = form;
   const { toast } = useToast();
+
+  useEffect(() => {
+      const invokeGetCar = async () => {
+        if (user) {
+          const savedCars = await GetSavedCars(
+            user?.emailAddresses[0].emailAddress as string
+          );
+          if(savedCars) {
+          console.log(savedCars);
+          setCar(savedCars);
+        }
+      }
+      };
+      invokeGetCar();
+    }, [user]);
+  //const savedCars = GetSavedCars(user?.emailAddresses[0].emailAddress as string);
 
   function onSubmit(data: FormSchemaType) {
     console.log(user?.emailAddresses[0].emailAddress);
@@ -77,7 +96,9 @@ export default function BookingPage() {
       title: "Booking is saved for location: " + state?.name,
       description:
         "Time:  " +
-        format(data.dateTime, "PPP HH:mm aa") + " till " + format(data.endTime, "PPP HH:mm aa") +
+        format(data.dateTime, "PPP HH:mm aa") +
+        " till " +
+        format(data.endTime, "PPP HH:mm aa") +
         " For " +
         user?.fullName,
     });
@@ -86,7 +107,7 @@ export default function BookingPage() {
   return (
     <>
       <form action={formAction}>
-        <div className="grid max-w-xs md:max-w-sm pb-5 items-center gap-4">
+        <div className="grid grid-row-4 max-w-xs md:max-w-sm pb-5 items-center gap-4">
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="name">Location ID</Label>
             <Input
@@ -165,7 +186,6 @@ export default function BookingPage() {
                             </PopoverContent>
                           </Popover>
                         </FormItem>
-
                       )}
                     />
                     <FormField
@@ -198,7 +218,7 @@ export default function BookingPage() {
                             <PopoverContent className="w-auto p-0">
                               <Calendar
                                 mode="single"
-                                fromDate={ watch("dateTime") }
+                                fromDate={watch("dateTime")}
                                 toDate={maxDay}
                                 selected={field.value}
                                 onSelect={field.onChange}

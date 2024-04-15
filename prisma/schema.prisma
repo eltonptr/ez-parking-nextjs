@@ -35,6 +35,7 @@ model ParkingLot {
   startTime DateTime 
   endTime DateTime
   booking Booking[]
+  availableSlots Int
   created DateTime
   lastUpdate DateTime
 }
@@ -48,6 +49,8 @@ model Booking {
   ParkingLot ParkingLot @relation(fields: [ParkingLotId], references: [id])
   UserId Int
   User User @relation(fields: [UserId], references: [id])
+  licensePlate String @db.VarChar(50)
+  amount Int
   created DateTime
   lastUpdate DateTime
 }

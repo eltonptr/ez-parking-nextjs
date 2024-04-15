@@ -11,6 +11,7 @@ export async function GetLocations(prevState: any, form:FormData) {
             locationId: form.get("locationId") as string
         }
     })
+
     console.log(parkingLots);
     return parkingLots;
 }
