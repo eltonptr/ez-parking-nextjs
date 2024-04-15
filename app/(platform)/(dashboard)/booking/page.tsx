@@ -24,7 +24,8 @@ import { Calendar as CalendarIcon } from "lucide-react"
 import { useFormState } from "react-dom"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
+import { useUser } from "@clerk/nextjs";
+import { useToast } from "@/components/ui/use-toast"
 const formSchema = z.object({
   dateTime: z.date(),
 });
@@ -34,13 +35,19 @@ export type FormSchemaType = z.infer<typeof formSchema>;
 
 export default function BookingPage() {
     const [state, formAction] = useFormState(GetLocations, null)
-
+    const {user} = useUser();
     const form = useForm<FormSchemaType>({
       resolver: zodResolver(formSchema),
     });
+    const { toast } = useToast()
 
     function onSubmit(data: FormSchemaType) {
-      SaveBooking(data);
+      console.log(user?.emailAddresses[0].emailAddress)
+      SaveBooking(data, user?.emailAddresses[0].emailAddress);
+      toast({
+        title: "Booking is saved",
+        description: "For "+ format(data.dateTime, "PPP HH:mm aa") + " by "+ user?.emailAddresses[0].emailAddress.toString(),
+      });
     }
    
 
@@ -55,7 +62,7 @@ export default function BookingPage() {
           <Button variant="default" type="submit">Submit</Button>
         </div>
       </form>{ state?
-        <Card className="max-w-xs md:max-w-md">
+        <Card className="max-w-xs md:max-w-sm">
         <CardHeader>
           <CardTitle>{state.name}</CardTitle>
           <CardDescription className="text-sm p-2">location ID(#{state.locationId})
@@ -69,7 +76,7 @@ export default function BookingPage() {
                 <div className="flex flex-col space-y-1.5">
                 <Form {...form}>
       <form 
-        className="flex items-end gap-4 justify-center"
+        className="flex flex-col items-stretch gap-4 justify-center"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <FormField
@@ -77,7 +84,7 @@ export default function BookingPage() {
           name="dateTime"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="text-left">DateTime</FormLabel>
+              <FormLabel className="flex-1 text-left">Pick the date and time </FormLabel>
               <Popover>
                 <FormControl>
                   <PopoverTrigger asChild>
@@ -92,7 +99,7 @@ export default function BookingPage() {
                       {field.value ? (
                         format(field.value, "PPP HH:mm aa")
                       ) : (
-                        <span>Pick a date</span>
+                        <span>Click to open the Calendar</span>
                       )}
                     </Button>
                   </PopoverTrigger>
@@ -115,7 +122,7 @@ export default function BookingPage() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button className="" type="submit">Submit</Button>
       </form>
     </Form>
                 </div>
