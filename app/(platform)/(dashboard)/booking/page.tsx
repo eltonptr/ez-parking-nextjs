@@ -41,7 +41,7 @@ const formSchema = z.object({
     .instanceof(Date, { message: "Date field is required" })
     .refine((date) => {
       return (
-        date.getTime() < new Date(Date.now()).getTime(),
+        date.getTime() <= new Date(Date.now()).getTime(),
         "The booking date should be in future!"
       );
     }),
@@ -49,7 +49,7 @@ const formSchema = z.object({
     .instanceof(Date, { message: "Date field is required" })
     .refine((date) => {
       return (
-        date.getTime() < new Date(Date.now()).getTime(),
+        date.getTime() > new Date(Date.now()).getTime(),
         "The booking date should be in future!"
       );
     }),
@@ -67,18 +67,19 @@ export default function BookingPage() {
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
   });
+  const { register, handleSubmit, watch } = form;
   const { toast } = useToast();
 
   function onSubmit(data: FormSchemaType) {
     console.log(user?.emailAddresses[0].emailAddress);
-    SaveBooking(data, user?.emailAddresses[0].emailAddress);
+    SaveBooking(data, user?.emailAddresses[0].emailAddress, state);
     toast({
-      title: "Booking is saved",
+      title: "Booking is saved for location: " + state?.name,
       description:
-        "For " +
-        format(data.dateTime, "PPP HH:mm aa") +
-        " by " +
-        user?.emailAddresses[0].emailAddress.toString(),
+        "Time:  " +
+        format(data.dateTime, "PPP HH:mm aa") + " till " + format(data.endTime, "PPP HH:mm aa") +
+        " For " +
+        user?.fullName,
     });
   }
 
@@ -197,7 +198,7 @@ export default function BookingPage() {
                             <PopoverContent className="w-auto p-0">
                               <Calendar
                                 mode="single"
-                                fromDate={today}
+                                fromDate={ watch("dateTime") }
                                 toDate={maxDay}
                                 selected={field.value}
                                 onSelect={field.onChange}
