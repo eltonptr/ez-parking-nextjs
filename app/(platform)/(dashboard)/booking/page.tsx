@@ -16,9 +16,11 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,14 +32,18 @@ import {
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format, max } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronsUpDown } from "lucide-react";
 import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
-import {  z } from "zod";
+import {  string, z } from "zod";
 import { useUser } from "@clerk/nextjs";
 import { useToast } from "@/components/ui/use-toast";
 import { GetSavedCars } from "@/actions/get-saved-cars";
 import { useEffect, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SavedCar } from "@prisma/client";
+import { Combobox } from '@headlessui/react'
+
 const formSchema = z.object({
   dateTime: z
     .instanceof(Date, { message: "Date field is required" })
@@ -48,13 +54,14 @@ const formSchema = z.object({
       );
     }),
   endTime: z
-    .instanceof(Date, { message: "Date field is required" })
+    .instanceof(Date, { message: "Date field is required"})
     .refine((date) => {
       return (
         date.getTime() > new Date(Date.now()).getTime(),
         "The booking date should be in future!"
       );
     }),
+  licensePlate: z.string({required_error: "Please Add license plate"})
 });
 
 export type FormSchemaType = z.infer<typeof formSchema>;
@@ -65,12 +72,12 @@ export default function BookingPage() {
   maxDay.setDate(today.getDate() + 5);
 
   const [state, formAction] = useFormState(GetLocations, null);
-  const [car, setCar] = useState({});
+  const [car, setCar] = useState<SavedCar[]>();
   const { user } = useUser();
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
   });
-  const { register, handleSubmit, watch } = form;
+  const { watch } = form;
   const { toast } = useToast();
 
   useEffect(() => {
@@ -86,8 +93,8 @@ export default function BookingPage() {
       }
       };
       invokeGetCar();
+      console.log(car);
     }, [user]);
-  //const savedCars = GetSavedCars(user?.emailAddresses[0].emailAddress as string);
 
   function onSubmit(data: FormSchemaType) {
     console.log(user?.emailAddresses[0].emailAddress);
@@ -100,7 +107,7 @@ export default function BookingPage() {
         " till " +
         format(data.endTime, "PPP HH:mm aa") +
         " For " +
-        user?.fullName,
+        user?.fullName + " " + data.licensePlate,
     });
   }
 
@@ -235,6 +242,33 @@ export default function BookingPage() {
                         </FormItem>
                       )}
                     />
+                    <FormField
+                      control={form.control}
+                      name="licensePlate"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel> Enter License Plate No. </FormLabel>
+                          <Input {...field} />
+                          <FormLabel> or pick from your saved car</FormLabel>
+                          <Select onValueChange={field.onChange}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Saved Car's" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {
+                              car && car.map(c => {
+                                return <SelectItem key={c.id} value={c.licensePlate}>{c.nickName}</SelectItem>
+                              })
+                            }
+                          </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
+                    {/* <Input placeholder="License Plate No." ></Input>
+                    <Button> Add another car </Button> */}
                     <Button className="" type="submit">
                       Submit
                     </Button>
