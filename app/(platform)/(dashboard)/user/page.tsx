@@ -56,7 +56,7 @@ const UserPage = () => {
         <div className="ml-1 mt-2">
             <Card className="w-7/12">
                 <div className="flex flex-col md:flex-col ml-1 mt-2">
-                    <Avatar className="w-5/12 h-5/12 " >
+                    <Avatar className="w-3/12 h-3/12 " >
                         <AvatarImage src={user?.imageUrl}/>
                         <AvatarFallback>{fChar}{lChar}</AvatarFallback>
                     </Avatar>
@@ -88,8 +88,9 @@ const UserPage = () => {
                             } ) }
                         </TableBody>
                     </Table>
+                    <Label className="font-bold"> Add a car</Label>
                     <form action={saveTheCar} ref={formRef}>
-                    <div className="flex flex-row gap-4 mt-7">
+                    <div className="flex flex-row gap-4 mt-2">
                         <div className="flex flex-col gap-2">
                             <Label>Nickname</Label>
                             <Input name="nickname" placeholder="my-car.."></Input>
