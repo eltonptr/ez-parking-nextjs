@@ -29,8 +29,10 @@ npx prisma db push - to sync your db with your code changes
 npx prisma studio - to see the tables and data 
 
 
-## Deploy on Vercel
+## Stripe local testing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+stripe login
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+stripe listen --forward-to localhost:3000/api/webhook
+
+stripe trigger payment_intent.succeeded              

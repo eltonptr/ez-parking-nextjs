@@ -38,6 +38,7 @@ import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SavedCar } from "@prisma/client";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   dateTime: z
@@ -74,6 +75,7 @@ export default function BookingPage() {
   });
   const { watch } = form;
   const { toast } = useToast();
+  const router = useRouter()
 
   useEffect(() => {
       const invokeGetCar = async () => {
@@ -93,7 +95,7 @@ export default function BookingPage() {
 
   const onSubmit = async (data: FormSchemaType) => {
     console.log(user?.emailAddresses[0].emailAddress);
-    await SaveBooking(data, user?.emailAddresses[0].emailAddress, state);
+    await SaveBooking(data, user?.emailAddresses[0].emailAddress, state!);
     toast({
       title: "Booking is saved for location: " + state?.name,
       description:
@@ -104,6 +106,7 @@ export default function BookingPage() {
         " For " +
         user?.fullName + " " + data.licensePlate,
     });
+    router.push("https://buy.stripe.com/test_cN23fH6tWfqKfSMaEE");
   }
 
   return (
