@@ -94,7 +94,7 @@ export default function BookingPage() {
       };
       invokeGetCar();
       console.log(car);
-    }, [user]);
+    },  [user]);
 
   function onSubmit(data: FormSchemaType) {
     console.log(user?.emailAddresses[0].emailAddress);
