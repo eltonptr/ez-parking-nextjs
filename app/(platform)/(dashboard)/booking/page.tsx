@@ -1,7 +1,6 @@
 "use client";
 import { GetLocations } from "@/actions/get-location";
 import { SaveBooking } from "@/actions/save-booking";
-import { SaveUser } from "@/actions/save-user";
 import { TimePickerDemo } from "@/components/templates/date-time-picker/time-picker-demo";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -9,18 +8,15 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,18 +27,17 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format, max } from "date-fns";
+import { format } from "date-fns";
 import { Calendar as CalendarIcon, ChevronsUpDown } from "lucide-react";
 import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
-import {  string, z } from "zod";
 import { useUser } from "@clerk/nextjs";
 import { useToast } from "@/components/ui/use-toast";
 import { GetSavedCars } from "@/actions/get-saved-cars";
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SavedCar } from "@prisma/client";
-import { Combobox } from '@headlessui/react'
+import { z } from "zod";
 
 const formSchema = z.object({
   dateTime: z
@@ -96,9 +91,9 @@ export default function BookingPage() {
       console.log(car);
     },  [user]);
 
-  function onSubmit(data: FormSchemaType) {
+  const onSubmit = async (data: FormSchemaType) => {
     console.log(user?.emailAddresses[0].emailAddress);
-    SaveBooking(data, user?.emailAddresses[0].emailAddress, state);
+    await SaveBooking(data, user?.emailAddresses[0].emailAddress, state);
     toast({
       title: "Booking is saved for location: " + state?.name,
       description:
